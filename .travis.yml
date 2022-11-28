@@ -1,24 +1,24 @@
 sudo: required
 language: generic
+
 services:
   - docker
 
-before_install
-  - docker build -t alexwinicky/react-test -f ./client/Dockerfile.dev .     
+before_install:
+  - docker build -t alexwinicky/react-test -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run -e CI=true alexwinicky/react-test npm test -- --coverage  
 
-after_sucess:
+after_success:
   - docker build -t alexwinicky/multi-client ./client
   - docker build -t alexwinicky/multi-nginx ./nginx
   - docker build -t alexwinicky/multi-server ./server
   - docker build -t alexwinicky/multi-worker ./worker
-# Login in to the docker CLI 
-- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-# Take those images and push them to docker hub
-- docker push alexwinicky/multi-client
-- docker push alexwinicky/multi-nginx
-- docker push alexwinicky/multi-server
-- docker push alexwinicky/multi-server
-
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push alexwinicky/multi-client
+  - docker push alexwinicky/multi-nginx
+  - docker push alexwinicky/multi-server
+  - docker push alexwinicky/multi-worker
