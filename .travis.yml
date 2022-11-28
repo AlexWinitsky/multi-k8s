@@ -4,13 +4,21 @@ services:
   - docker
 
 before_install
-  - docker build -t alexvinitsky/react-test -f ./client/Dockerfile.dev .     
+  - docker build -t alexwinicky/react-test -f ./client/Dockerfile.dev .     
 
 script:
-  - docker run -e CI=true alexvinitsky/react-test npm test -- --coverage  
+  - docker run -e CI=true alexwinicky/react-test npm test -- --coverage  
 
 after_sucess:
-  - docker build -t alexvinitsky/multi-client ./client
-  - docker build -t alexvinitsky/multi-nginx ./nginx
-  - docker build -t alexvinitsky/multi-server ./server
-  - docker build -t alexvinitsky/multi-worker ./worker
+  - docker build -t alexwinicky/multi-client ./client
+  - docker build -t alexwinicky/multi-nginx ./nginx
+  - docker build -t alexwinicky/multi-server ./server
+  - docker build -t alexwinicky/multi-worker ./worker
+# Login in to the docker CLI 
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+# Take those images and push them to docker hub
+- docker push alexwinicky/multi-client
+- docker push alexwinicky/multi-nginx
+- docker push alexwinicky/multi-server
+- docker push alexwinicky/multi-server
+
